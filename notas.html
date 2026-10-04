@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notas del profesional | ElectroCalc</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== ENCABEZADO (versión simple, sin menú del presupuesto) ==================== -->
+  <header class="header">
+    <div class="header__contenido contenedor">
+      <div class="logo">
+        <svg class="logo__icono" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/>
+        </svg>
+        <span class="logo__texto">Electro<strong>Calc</strong></span>
+      </div>
+
+      <!-- Esta página es aparte del presupuesto: solo dejamos un link para volver. -->
+      <a href="index.html" class="nav__link nav__volver">← Volver al presupuesto</a>
+    </div>
+  </header>
+
+  <!-- ==================== CONTENIDO: NOTAS DEL PROFESIONAL (tipo Word) ==================== -->
+  <main class="contenedor pagina-notas">
+
+    <div class="titulo-seccion">
+      <h2>📝 Notas del profesional</h2>
+      <p>Un documento de texto, como en Word, para que escribas lo que necesites. <strong>No se incluye</strong>
+        en el PDF, la impresión ni el "Compartir" del presupuesto: el cliente nunca lo ve.</p>
+    </div>
+
+    <!-- ==================== BARRA DE HERRAMIENTAS (estilo Word) ==================== -->
+    <div class="editor-toolbar" id="editorToolbar">
+
+      <select class="editor-toolbar__select" id="selectEstilo" title="Estilo de párrafo">
+        <option value="p">Párrafo normal</option>
+        <option value="h2">Título</option>
+        <option value="h3">Subtítulo</option>
+      </select>
+
+      <span class="editor-toolbar__separador"></span>
+
+      <button type="button" class="editor-toolbar__btn" data-comando="bold" title="Negrita (Ctrl+B)"><strong>N</strong></button>
+      <button type="button" class="editor-toolbar__btn" data-comando="italic" title="Cursiva (Ctrl+I)"><em>K</em></button>
+      <button type="button" class="editor-toolbar__btn" data-comando="underline" title="Subrayado (Ctrl+U)"><u>S</u></button>
+
+      <span class="editor-toolbar__separador"></span>
+
+      <button type="button" class="editor-toolbar__btn" data-comando="insertUnorderedList" title="Lista con viñetas">☰•</button>
+      <button type="button" class="editor-toolbar__btn" data-comando="insertOrderedList" title="Lista numerada">☰1.</button>
+
+      <span class="editor-toolbar__separador"></span>
+
+      <button type="button" class="editor-toolbar__btn" data-comando="justifyLeft" title="Alinear izquierda">⇤</button>
+      <button type="button" class="editor-toolbar__btn" data-comando="justifyCenter" title="Centrar">↔</button>
+      <button type="button" class="editor-toolbar__btn" data-comando="justifyRight" title="Alinear derecha">⇥</button>
+
+      <span class="editor-toolbar__separador"></span>
+
+      <button type="button" class="editor-toolbar__btn" data-comando="undo" title="Deshacer (Ctrl+Z)">↶</button>
+
+      <span class="editor-toolbar__separador"></span>
+
+      <!-- Dictado por voz: mientras está activo, lo que hables se escribe solo -->
+      <button type="button" class="editor-toolbar__btn editor-toolbar__btn--mic" id="btnGrabar" title="Dictar por voz">🎤</button>
+
+      <span class="editor-toolbar__estado" id="estadoGuardado">Guardado ✓</span>
+    </div>
+
+    <!-- ==================== LA "HOJA" DEL DOCUMENTO (estilo libreta) ==================== -->
+    <section class="hoja-documento">
+      <div class="hoja-documento__barra">Notas</div>
+      <div
+        id="documentoNotas"
+        class="hoja-documento__contenido"
+        contenteditable="true"
+        data-placeholder="Escribí acá tus notas: materiales pendientes, condiciones de pago, fecha de inicio de la obra, observaciones del lugar, recordatorios para el próximo presupuesto…"
+      ></div>
+    </section>
+
+    <div class="notas-card__acciones">
+      <button class="btn-accion btn-accion--imprimir" id="btnImprimirNotas" type="button">
+        <span class="btn-accion__icono">🖨️</span>
+        Imprimir
+      </button>
+      <button class="btn-accion btn-accion--word" id="btnDescargarWord" type="button">
+        <span class="btn-accion__icono">💾</span>
+        Descargar como Word
+      </button>
+      <button class="btn-accion btn-accion--borrar" id="btnBorrarNotas" type="button">
+        <span class="btn-accion__icono">🗑️</span>
+        Borrar todo
+      </button>
+    </div>
+
+    <p class="notas-card__ayuda">
+      El documento se guarda automáticamente en este navegador (no se sube a ningún servidor).
+      Si abrís esta página desde otra computadora o borrás los datos del navegador, no vas a verlo ahí;
+      usá "Descargar como Word" para guardar una copia aparte.
+      <br>
+      🎤 El dictado por voz funciona mejor en Google Chrome y te va a pedir permiso para usar el micrófono la primera vez.
+    </p>
+
+  </main>
+
+  <footer class="footer">
+    <p>ElectroCalc &middot; Espacio privado del profesional &middot; No visible para el cliente</p>
+  </footer>
+
+  <script src="notas.js"></script>
+</body>
+</html>

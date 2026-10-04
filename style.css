@@ -1,0 +1,1212 @@
+/* =========================================================
+   PRESUPUESTO ELÉCTRICO - ESTILOS
+   Paleta principal: naranja (color eléctrico / cobre)
+   ========================================================= */
+
+/* ---------- Variables de color y tipografía ----------
+   Usar variables CSS facilita cambiar el diseño entero
+   modificando un solo valor acá arriba. */
+:root {
+  --naranja: #ff7a1a;
+  --naranja-oscuro: #e8630a;
+  --naranja-claro: #ffb27a;
+  --naranja-suave: #fff1e6;
+  --azul-oscuro: #1c2333;   /* para textos y header */
+  --azul-menu: #1a5aa6;     /* azul de las cabeceras de acordeón (estilo AAIERIC) */
+  --azul-menu-oscuro: #0f3f7d;
+  --gris-texto: #5b6172;
+  --gris-borde: #e7e2db;
+  --blanco: #ffffff;
+  --fondo: #faf8f5;
+  --verde-ok: #1f9d55;
+
+  --fuente-titulo: 'Space Grotesk', sans-serif;
+  --fuente-texto: 'Inter', sans-serif;
+
+  --radio: 14px;
+  --sombra: 0 8px 24px rgba(28, 35, 51, 0.08);
+  --transicion: 0.25s ease;
+}
+
+/* ---------- Reset básico ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--fuente-texto);
+  color: var(--azul-oscuro);
+  background: var(--fondo);
+  line-height: 1.5;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--blanco);
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.header__contenido {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--fuente-titulo);
+  font-size: 1.3rem;
+  color: var(--azul-oscuro);
+}
+
+.logo__icono {
+  width: 26px;
+  height: 26px;
+  color: var(--naranja);
+}
+
+.logo__texto strong {
+  color: var(--naranja);
+}
+
+/* ----- Navegación ----- */
+.nav {
+  display: flex;
+  gap: 28px;
+}
+
+.nav__link {
+  text-decoration: none;
+  color: var(--gris-texto);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color var(--transicion);
+  position: relative;
+}
+
+.nav__link:hover {
+  color: var(--naranja-oscuro);
+}
+
+
+/* Botón hamburguesa: oculto en pantallas grandes */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.menu-toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--azul-oscuro);
+  border-radius: 2px;
+  transition: transform var(--transicion), opacity var(--transicion);
+}
+
+/* Estado abierto del menú hamburguesa -> forma de X */
+.menu-toggle.activo span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.activo span:nth-child(2) { opacity: 0; }
+.menu-toggle.activo span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* =========================================================
+   DATOS DEL TRÁMITE (profesional, cliente y fecha)
+   ========================================================= */
+.datos-tramite {
+  background: var(--azul-oscuro);
+  border-bottom: 3px solid var(--naranja);
+}
+
+.datos-tramite__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  padding: 16px 20px;
+}
+
+.datos-tramite__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.datos-tramite__campo label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--naranja-claro);
+}
+
+.datos-tramite__campo input {
+  font-family: var(--fuente-texto);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--blanco);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 8px 10px;
+  transition: border-color var(--transicion), background var(--transicion);
+}
+
+.datos-tramite__campo input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.datos-tramite__campo input:focus {
+  outline: none;
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* jsPDF/scheme picker no aplica a fecha; ícono nativo del navegador */
+.datos-tramite__campo input[type="date"] {
+  color-scheme: dark;
+}
+
+@media (max-width: 760px) {
+  .datos-tramite__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 460px) {
+  .datos-tramite__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   BANNER PRINCIPAL
+   ========================================================= */
+.banner {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--azul-oscuro) 0%, #2b3550 100%);
+  padding: 64px 0 72px;
+  color: var(--blanco);
+}
+
+/* Patrón decorativo tipo "circuito eléctrico" hecho solo con CSS gradients,
+   así el banner no depende de ninguna imagen externa. */
+.banner__circuitos {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(var(--naranja) 1px, transparent 1px),
+    linear-gradient(90deg, var(--naranja) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at 75% 30%, black, transparent 70%);
+}
+
+.banner__contenido {
+  position: relative;
+  max-width: 620px;
+}
+
+.banner__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  color: var(--naranja-claro);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.banner__titulo {
+  font-family: var(--fuente-titulo);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.banner__texto {
+  color: #c7cbdb;
+  font-size: 1.02rem;
+  max-width: 480px;
+}
+
+/* =========================================================
+   TÍTULO DE SECCIÓN
+   ========================================================= */
+.titulo-seccion {
+  text-align: center;
+  margin: 48px 0 28px;
+}
+
+.titulo-seccion h2 {
+  font-family: var(--fuente-titulo);
+  font-size: 2rem;
+  color: var(--azul-oscuro);
+}
+
+.titulo-seccion p {
+  color: var(--gris-texto);
+  margin-top: 6px;
+}
+
+.titulo-seccion__fuente {
+  font-size: 0.78rem;
+  color: var(--gris-texto);
+  opacity: 0.8;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* =========================================================
+   ACORDEÓN (secciones desplegables naranjas)
+   ========================================================= */
+.acordeon {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.acordeon-seccion {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+  border: 1px solid var(--gris-borde);
+}
+
+/* Cabecera azul, clickeable (estilo AAIERIC) */
+.acordeon-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, var(--azul-menu) 0%, var(--azul-menu-oscuro) 100%);
+  color: var(--blanco);
+  border: none;
+  cursor: pointer;
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  transition: filter var(--transicion);
+}
+
+.acordeon-header:hover {
+  filter: brightness(1.05);
+}
+
+.acordeon-header__icono {
+  font-size: 1.2rem;
+}
+
+.acordeon-header__titulo {
+  flex: 1;
+}
+
+.acordeon-header__subtotal {
+  font-family: var(--fuente-titulo);
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.acordeon-header__flecha {
+  transition: transform var(--transicion);
+  font-size: 1.1rem;
+}
+
+/* Cuando la sección está abierta, rotamos la flecha */
+.acordeon-seccion.abierta .acordeon-header__flecha {
+  transform: rotate(180deg);
+}
+
+/* Cuerpo desplegable: se anima con max-height (definido por JS con la
+   altura real del contenido, así la transición es suave siempre). */
+.acordeon-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding var(--transicion);
+  padding: 0 20px;
+}
+
+.acordeon-seccion.abierta .acordeon-body {
+  padding: 18px 20px 22px;
+}
+
+/* =========================================================
+   TABLA DE MATERIALES
+   ========================================================= */
+.tabla-materiales {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 14px;
+}
+
+.tabla-materiales thead th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gris-texto);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gris-borde);
+}
+
+.col-cant, .col-precio, .col-sub { width: 110px; }
+.col-accion { width: 36px; }
+
+.fila-material td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--gris-borde);
+  vertical-align: middle;
+}
+
+.fila-material input[type="text"],
+.fila-material input[type="number"] {
+  width: 100%;
+  border: 1px solid var(--gris-borde);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: var(--fuente-texto);
+  font-size: 0.9rem;
+  background: var(--fondo);
+  transition: border-color var(--transicion), background var(--transicion);
+}
+
+.fila-material input:focus {
+  outline: none;
+  border-color: var(--naranja);
+  background: var(--blanco);
+}
+
+/* Input inválido (validación con JS agrega esta clase) */
+.fila-material input.invalido {
+  border-color: #d64545;
+  background: #fdeceb;
+}
+
+.subtotal-fila {
+  font-weight: 600;
+  color: var(--naranja-oscuro);
+}
+
+.btn-quitar {
+  background: var(--naranja-suave);
+  color: var(--naranja-oscuro);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background var(--transicion), transform var(--transicion);
+}
+
+.btn-quitar:hover {
+  background: var(--naranja);
+  color: var(--blanco);
+  transform: scale(1.08);
+}
+
+.btn-agregar {
+  background: none;
+  border: 1.5px dashed var(--naranja);
+  color: var(--naranja-oscuro);
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background var(--transicion), color var(--transicion);
+}
+
+.btn-agregar:hover {
+  background: var(--naranja);
+  color: var(--blanco);
+}
+
+/* Animación breve al agregar una fila nueva */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fila-material.nueva {
+  animation: aparecer 0.3s ease;
+}
+
+/* =========================================================
+   RESUMEN / TOTAL
+   ========================================================= */
+.resumen {
+  background: var(--azul-oscuro);
+  color: var(--blanco);
+  border-radius: var(--radio);
+  padding: 28px 26px;
+  margin-bottom: 40px;
+}
+
+.resumen__titulo {
+  font-family: var(--fuente-titulo);
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+}
+
+.resumen__lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.resumen__lista li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.92rem;
+  color: #c7cbdb;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.resumen__lista li span:last-child {
+  color: var(--naranja-claro);
+  font-weight: 600;
+}
+
+.resumen__iva {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #c7cbdb;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.resumen__iva input {
+  accent-color: var(--naranja);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.resumen__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 16px;
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.resumen__total span {
+  font-size: 1rem;
+  color: #c7cbdb;
+}
+
+.resumen__total strong {
+  font-family: var(--fuente-titulo);
+  font-size: 1.9rem;
+  color: var(--naranja-claro);
+}
+
+/* =========================================================
+   ACCIONES (Descargar PDF / Compartir / Imprimir)
+   ========================================================= */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  position: relative; /* ancla el menú desplegable de "Compartir" */
+}
+
+.btn-accion {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: transform var(--transicion), filter var(--transicion), box-shadow var(--transicion);
+}
+
+.btn-accion:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-accion:active {
+  transform: translateY(0);
+}
+
+.btn-accion__icono {
+  font-size: 1.05rem;
+}
+
+/* Descargar PDF: naranja sólido, la acción principal */
+.btn-accion--pdf {
+  background: linear-gradient(135deg, var(--naranja) 0%, var(--naranja-oscuro) 100%);
+  color: var(--blanco);
+  box-shadow: 0 6px 16px rgba(255, 122, 26, 0.3);
+}
+
+/* Compartir: estilo tipo WhatsApp, para que se reconozca de un vistazo */
+.btn-accion--compartir {
+  background: #25d366;
+  color: var(--blanco);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+}
+
+/* Imprimir: neutro, con borde */
+.btn-accion--imprimir {
+  background: var(--blanco);
+  color: var(--azul-oscuro);
+  border: 1.5px solid var(--gris-borde);
+}
+
+.btn-accion--imprimir:hover {
+  border-color: var(--naranja);
+  color: var(--naranja-oscuro);
+}
+
+/* Estado breve de confirmación (ej: "¡Copiado!" o "PDF listo") */
+.btn-accion.confirmado {
+  background: var(--verde-ok);
+  color: var(--blanco);
+}
+
+/* ---------- Menú desplegable de "Compartir" (versión PC) ---------- */
+.menu-compartir {
+  position: absolute;
+  top: calc(100% + 8px);
+  /* Se posiciona debajo del botón "Compartir". El botón es el 2do
+     de los 3 (pdf, compartir, imprimir), por eso el cálculo de la izquierda. */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 220px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  box-shadow: var(--sombra);
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 50;
+
+  /* Animación de apertura */
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.menu-compartir.visible {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.menu-compartir__opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--fuente-texto);
+  font-size: 0.9rem;
+  color: var(--azul-oscuro);
+  text-align: left;
+  transition: background var(--transicion);
+}
+
+.menu-compartir__opcion:hover {
+  background: var(--naranja-suave);
+}
+
+.menu-compartir__opcion span {
+  font-size: 1.05rem;
+}
+
+/* =========================================================
+   AYUDA
+   ========================================================= */
+.ayuda {
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 24px 26px;
+  margin-bottom: 90px; /* deja espacio para la barra de total fija */
+}
+
+.ayuda h3 {
+  font-family: var(--fuente-titulo);
+  margin-bottom: 10px;
+}
+
+.ayuda ol {
+  padding-left: 20px;
+  color: var(--gris-texto);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* =========================================================
+   BARRA DE TOTAL FIJA (siempre visible)
+   ========================================================= */
+.barra-total {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--azul-oscuro);
+  color: var(--blanco);
+  padding: 14px 22px;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.barra-total__texto {
+  font-size: 0.85rem;
+  color: #c7cbdb;
+}
+
+.barra-total__monto {
+  font-family: var(--fuente-titulo);
+  font-size: 1.3rem;
+  color: var(--naranja-claro);
+  transition: transform 0.15s ease;
+}
+
+/* Pequeño "pulso" cuando el total cambia, agregado por JS */
+.barra-total__monto.pulso {
+  transform: scale(1.12);
+}
+
+/* =========================================================
+   PIE DE PÁGINA
+   ========================================================= */
+.footer {
+  text-align: center;
+  padding: 18px;
+  font-size: 0.8rem;
+  color: var(--gris-texto);
+}
+
+.footer__link-notas {
+  color: var(--azul-menu);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footer__link-notas:hover {
+  text-decoration: underline;
+}
+
+/* Link para volver, dentro del header de notas.html */
+.nav__volver {
+  text-decoration: none;
+  color: var(--gris-texto);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color var(--transicion);
+}
+
+.nav__volver:hover {
+  color: var(--naranja-oscuro);
+}
+
+/* =========================================================
+   PÁGINA "NOTAS DEL PROFESIONAL" (notas.html)
+   Es un archivo aparte del presupuesto principal: un editor de
+   texto simple, tipo Word, pensado solo para el electricista.
+   El cliente nunca ve esta página.
+   ========================================================= */
+.pagina-notas {
+  padding-bottom: 60px; /* acá no hay barra de total fija, no hace falta tanto espacio */
+}
+
+/* ---------- Barra de herramientas (la "cinta" de Word) ---------- */
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 10px 10px 0 0;
+  padding: 10px 12px;
+  position: sticky;
+  top: 70px; /* queda debajo del header, que es sticky también */
+  z-index: 40;
+}
+
+.editor-toolbar__select {
+  border: 1px solid var(--gris-borde);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-family: var(--fuente-texto);
+  font-size: 0.85rem;
+  background: var(--fondo);
+  color: var(--azul-oscuro);
+  cursor: pointer;
+}
+
+.editor-toolbar__separador {
+  width: 1px;
+  height: 22px;
+  background: var(--gris-borde);
+  margin: 0 4px;
+}
+
+.editor-toolbar__btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--azul-oscuro);
+  font-size: 0.9rem;
+  font-family: var(--fuente-texto);
+  cursor: pointer;
+  transition: background var(--transicion), border-color var(--transicion);
+}
+
+.editor-toolbar__btn:hover {
+  background: var(--naranja-suave);
+}
+
+/* Se resalta mientras el cursor está dentro de ese formato
+   (ej: escribiendo en negrita, el botón "N" queda marcado). */
+.editor-toolbar__btn--activo {
+  background: var(--azul-menu);
+  color: var(--blanco);
+}
+
+.editor-toolbar__estado {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--gris-texto);
+  white-space: nowrap;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Botón de dictado por voz ---------- */
+.editor-toolbar__btn--mic {
+  font-size: 1rem;
+}
+
+.editor-toolbar__btn--mic:disabled {
+  background: none;
+}
+
+/* Mientras está grabando: fondo rojo y un pulso suave para que
+   se note claramente que el micrófono está activo. */
+.editor-toolbar__btn--grabando {
+  background: #e74c3c !important;
+  color: var(--blanco);
+  animation: pulso-grabando 1.4s ease-in-out infinite;
+}
+
+@keyframes pulso-grabando {
+  0%   { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(231, 76, 60, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
+
+.editor-toolbar__estado--ok {
+  color: var(--verde-ok);
+  font-weight: 600;
+}
+
+/* ---------- La "hoja" del documento: estilo libreta/post-it ----------
+   Franja marrón arriba (como la del logo "FlyNote" de referencia) +
+   papel amarillo rayado abajo, con las esquinas redondeadas en todo
+   el bloque. */
+.hoja-documento {
+  background: #f7e9ab;      /* amarillo papel */
+  border: 1px solid #e3cf85;
+  border-radius: 20px;
+  box-shadow: var(--sombra);
+  overflow: hidden;         /* para que la franja marrón respete el redondeado */
+}
+
+.hoja-documento__barra {
+  background: #7a4f3a;      /* marrón de la franja superior */
+  color: #fdf3df;
+  font-family: 'Caveat', cursive;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 0 14px;
+  letter-spacing: 0.02em;
+}
+
+.hoja-documento__contenido {
+  min-height: 420px;
+  padding: 28px 40px 40px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.05rem;
+  color: #4a3b1f;
+  outline: none;
+
+  /* Rayado horizontal tipo hoja de libreta, alineado con line-height */
+  line-height: 36px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 35px,
+    #e3cf85 35px,
+    #e3cf85 36px
+  );
+  background-attachment: local; /* las líneas se mueven junto con el scroll del texto */
+}
+
+/* Texto de ayuda que aparece cuando el documento está vacío
+   (truco: un contenteditable no tiene "placeholder" nativo). */
+.hoja-documento__contenido:empty::before {
+  content: attr(data-placeholder);
+  color: #a9915c;
+  font-style: italic;
+}
+
+.hoja-documento__contenido h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.4rem;
+  line-height: 36px;
+  color: #5c4326;
+  margin: 0;
+}
+
+.hoja-documento__contenido h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  line-height: 36px;
+  color: #5c4326;
+  margin: 0;
+}
+
+.hoja-documento__contenido ul,
+.hoja-documento__contenido ol {
+  padding-left: 30px;
+  margin: 0;
+}
+
+.hoja-documento__contenido p {
+  margin: 0;
+}
+
+/* ---------- Botones debajo de la hoja ---------- */
+.notas-card__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.notas-card__acciones .btn-accion {
+  flex: 0 1 auto;
+  min-width: 160px;
+}
+
+/* Botón "Descargar como Word": celeste, a tono con el editor */
+.btn-accion--word {
+  background: linear-gradient(135deg, var(--azul-menu) 0%, var(--azul-menu-oscuro) 100%);
+  color: var(--blanco);
+  box-shadow: 0 6px 16px rgba(26, 90, 166, 0.3);
+}
+
+/* Botón "Borrar todo": rojo suave, para que se note que es destructivo */
+.btn-accion--borrar {
+  background: #fdeceb;
+  color: #c0392b;
+  border: 1.5px solid #f3c6c1;
+}
+
+.btn-accion--borrar:hover {
+  background: #c0392b;
+  color: var(--blanco);
+  border-color: #c0392b;
+}
+
+.notas-card__ayuda {
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: var(--gris-texto);
+  text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE - TABLET Y CELULAR
+   ========================================================= */
+@media (max-width: 720px) {
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  /* El menú se convierte en un panel desplegable debajo del header */
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--blanco);
+    flex-direction: column;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transicion);
+    border-bottom: 1px solid var(--gris-borde);
+  }
+
+  .nav.abierto {
+    max-height: 320px; /* un poco más alto: ahora el menú tiene 5 links */
+  }
+
+  .nav__link {
+    padding: 14px 20px;
+    border-top: 1px solid var(--gris-borde);
+  }
+
+  .banner {
+    padding: 44px 0 56px;
+  }
+
+  /* En celular, la tabla de materiales se transforma en tarjetas apiladas */
+  .tabla-materiales thead {
+    display: none;
+  }
+
+  .fila-material {
+    display: block;
+    padding: 10px 0;
+  }
+
+  .fila-material td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: none;
+    padding: 6px 0;
+  }
+
+  .fila-material td[data-label]::before {
+    content: attr(data-label);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--gris-texto);
+    font-weight: 600;
+    flex-shrink: 0;
+    width: 90px;
+  }
+
+  .col-cant, .col-precio, .col-sub, .col-accion {
+    width: auto;
+  }
+
+  .barra-total {
+    padding: 12px 16px;
+  }
+
+  .barra-total__texto {
+    font-size: 0.75rem;
+  }
+
+  .barra-total__monto {
+    font-size: 1.1rem;
+  }
+
+  /* Editor de notas en celular: menos padding y toolbar más compacta */
+  .editor-toolbar {
+    top: 64px;
+    padding: 8px;
+  }
+
+  .hoja-documento {
+    padding: 20px 18px;
+  }
+
+  .editor-toolbar__estado {
+    display: none; /* en pantallas chicas prioriza espacio para los botones */
+  }
+}
+
+/* Respeta a los usuarios que piden menos animaciones */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   IMPRESIÓN (botón "Imprimir" / Ctrl+P)
+   Oculta todo lo que no sirve en papel y despliega
+   todas las secciones para que se vea el detalle completo.
+   ========================================================= */
+@media print {
+
+  .header,
+  .banner,
+  .barra-total,
+  .acciones,
+  .menu-compartir,
+  .ayuda,
+  .footer,
+  .btn-agregar,
+  .btn-quitar,
+  .acordeon-header__flecha,
+  .nav__volver,
+  .editor-toolbar,
+  .notas-card__acciones,
+  .notas-card__ayuda {
+    display: none !important;
+  }
+
+  /* En notas.html, que el documento se vea como una hoja de papel blanca
+     normal al imprimir (sin amarillo, sin franja marrón, sin rayado):
+     ahorra tinta y queda más prolijo en el papel. */
+  .hoja-documento {
+    background: var(--blanco) !important;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .hoja-documento__barra {
+    display: none !important;
+  }
+
+  .hoja-documento__contenido {
+    min-height: auto;
+    padding: 0;
+    background-image: none !important;
+    color: #000 !important;
+    line-height: 1.6;
+  }
+
+  body {
+    background: var(--blanco);
+  }
+
+  /* Datos del trámite: se imprimen como una franja prolija arriba de la hoja */
+  .datos-tramite {
+    background: var(--blanco) !important;
+    border-bottom: 2px solid var(--azul-oscuro);
+    margin-bottom: 10px;
+  }
+
+  .datos-tramite__grid {
+    grid-template-columns: repeat(5, 1fr);
+    padding: 0 0 10px;
+    gap: 8px;
+  }
+
+  .datos-tramite__campo label {
+    color: var(--gris-texto) !important;
+  }
+
+  .datos-tramite__campo input {
+    color: var(--azul-oscuro) !important;
+    background: none !important;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    padding: 2px 0;
+  }
+
+  /* Forzamos que TODAS las secciones se vean abiertas en el papel,
+     sin importar si el usuario las había cerrado en pantalla. */
+  .acordeon-body {
+    max-height: none !important;
+    padding: 14px 4px !important;
+  }
+
+  .acordeon-seccion {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .acordeon-header {
+    background: var(--azul-menu) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Los inputs se ven como texto plano, prolijos, sin bordes de formulario */
+  .fila-material input {
+    border: none;
+    background: none;
+    padding: 4px 0;
+  }
+
+  /* Ocultamos en el papel las filas sin cantidad cargada, y las
+     secciones enteras que no tengan ningún ítem con valor. Estas
+     clases las agrega script.js justo antes de llamar a window.print(). */
+  .fila-vacia-print {
+    display: none !important;
+  }
+
+  .seccion-vacia-print {
+    display: none !important;
+  }
+
+  .resumen {
+    background: var(--azul-oscuro) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    break-inside: avoid;
+  }
+}

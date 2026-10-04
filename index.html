@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presupuesto Eléctrico | ElectroCalc</title>
+
+  <!-- Fuente desde Google Fonts (títulos + texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Librería jsPDF: se usa solo para el botón "Descargar PDF" -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ==================== ENCABEZADO ==================== -->
+  <header class="header">
+    <div class="header__contenido contenedor">
+
+      <!-- Logo: un ícono de rayo hecho en SVG (no depende de imágenes externas) -->
+      <div class="logo">
+        <svg class="logo__icono" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/>
+        </svg>
+        <span class="logo__texto">Electro<strong>Calc</strong></span>
+      </div>
+
+      <!-- Botón hamburguesa (solo visible en celular) -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- ==================== BARRA DE NAVEGACIÓN ==================== -->
+      <nav class="nav" id="nav">
+        <a href="#inicio" class="nav__link">Inicio</a>
+        <a href="#presupuesto" class="nav__link">Presupuesto</a>
+        <a href="#resumen" class="nav__link">Resumen</a>
+        <a href="#ayuda" class="nav__link">Ayuda</a>
+        <a href="notas.html" class="nav__link">📒 Mi Libreta</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==================== DATOS DEL TRÁMITE ==================== -->
+  <!-- Estos datos se completan una sola vez (profesional) y por cada
+       trabajo (cliente y fecha). Se incluyen en el PDF, en "Compartir"
+       y al imprimir. -->
+  <section class="datos-tramite" id="datosTramite">
+    <div class="contenedor datos-tramite__grid">
+      <div class="datos-tramite__campo">
+        <label for="dtProfesional">Electricista</label>
+        <input type="text" id="dtProfesional" placeholder="Nombre y apellido">
+      </div>
+      <div class="datos-tramite__campo">
+        <label for="dtTelefono">Teléfono</label>
+        <input type="text" id="dtTelefono" placeholder="Teléfono de contacto">
+      </div>
+      <div class="datos-tramite__campo">
+        <label for="dtDni">DNI</label>
+        <input type="text" id="dtDni" placeholder="DNI del profesional">
+      </div>
+      <div class="datos-tramite__campo">
+        <label for="dtCliente">Cliente</label>
+        <input type="text" id="dtCliente" placeholder="Nombre y apellido del cliente">
+      </div>
+      <div class="datos-tramite__campo">
+        <label for="dtFecha">Fecha</label>
+        <input type="date" id="dtFecha">
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== BANNER PRINCIPAL ==================== -->
+  <section class="banner" id="inicio">
+    <!-- El patrón de fondo (líneas tipo circuito) está hecho 100% en CSS -->
+    <div class="banner__circuitos" aria-hidden="true"></div>
+    <div class="contenedor banner__contenido">
+      <p class="banner__eyebrow">Herramienta para instaladores y estudiantes</p>
+      <h1 class="banner__titulo">Calculá tu instalación eléctrica al instante</h1>
+      <p class="banner__texto">Cargá los materiales, la mano de obra y mirá el total actualizarse en tiempo real.</p>
+    </div>
+  </section>
+
+  <!-- ==================== TÍTULO + RESUMEN FLOTANTE ==================== -->
+  <main class="contenedor" id="presupuesto">
+    <div class="titulo-seccion">
+      <h2>Presupuesto Eléctrico</h2>
+      <p>Desplegá cada categoría, cargá cantidades y mirá el total actualizarse solo.</p>
+      <p class="titulo-seccion__fuente">Valores de referencia: AAIERIC — Costos Sugeridos de Mano de Obra, Julio 2026 (CABA/GBA). Podés editarlos según tu zona.</p>
+    </div>
+
+    <!-- ==================== ACORDEÓN: ILUMINACIÓN ==================== -->
+    <div class="acordeon">
+
+      <div class="acordeon-seccion" data-seccion="visita">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">🧾</span>
+          <span class="acordeon-header__titulo">Visita, Urgencia y Servicios Generales</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Visita: inspección, evaluación, diagnóstico y presupuesto"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="54310"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Urgencia (Lun a Sáb desde 20 hs / Domingo y feriado) - mínimo"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="130203"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Unidad básica de cotización (1 boca completa)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="108431"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Service - Instalación (mínimo)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="108431"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Hora de trabajo (mínimo)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="54310"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Hora de trabajo (promedio)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="54310"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Emergencia/urgencia - atención inmediata (Lun a Sáb 8 a 20 hs)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="108431"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Corrección factor de potencia monofásico (x kVA)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="140873"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="canalizacion">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">🏗️</span>
+          <span class="acordeon-header__titulo">Canalización y Amurado de Cañería</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Canalización en losa - caño metálico (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="54894"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Canalización en loseta - caño metálico (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="57637"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Amurado mampostería - ladrillo común (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="62382"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Amurado mampostería - ladrillo hueco (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="60900"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Amurado mampostería - ladrillo común (x metro)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="14909"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Amurado mampostería - ladrillo hueco (x metro)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="14618"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Amurado a la vista - metal/PVC/cablecanal 14x30 (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="49861"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Pase de viga y/o columna (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="57898"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="cableado">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">🔌</span>
+          <span class="acordeon-header__titulo">Cableado</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Cable subterráneo - tierra (x metro)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="54260"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Cable subterráneo - piso (x metro)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="57898"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Cable subterráneo - adicional por caja de paso (tierra)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="59587"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Cable subterráneo - adicional por caja de paso (piso)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="63628"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Cableado obra nueva - canalización propia (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="26680"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Cableado obra nueva - canalización de otro profesional (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="37149"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Recableado con artefactos (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="55707"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Recableado sin artefactos (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="37149"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="conexiones">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">🔲</span>
+          <span class="acordeon-header__titulo">Puntos, Tomas y Automatismos</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Punto, toma simple o portalámpara (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="19363"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Toma doble (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="24525"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Punto combinación (x boca)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="20842"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Contactores (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="135580"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Sensores - sin costo de cableado (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="119275"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Grupo electrógeno monofásico hasta 3,5 kVA (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="271122"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="tableros">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">🛡️</span>
+          <span class="acordeon-header__titulo">Tableros</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="TP monofásico - con 1 ID y 1 TM + PAT (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="320310"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="TP monofásico - solo PAT (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="162585"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="TP trifásico - con 1 ID y 1 TM + PAT (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="433760"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="TP trifásico - ID/ITM u otro módulo bipolar adicional"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="78754"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="TP trifásico - ID tetrapolar"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="135580"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="TP trifásico - ITM tetrapolar"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="135580"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="TP trifásico - ITM tripolar"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="114381"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Tablero seccional - hasta 8 polos"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="227652"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Tablero seccional - de 8 a 36 polos"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="910719"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Tablero seccional - de 36 a 54 polos"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="1366016"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="artefactos">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">💡</span>
+          <span class="acordeon-header__titulo">Artefactos de Iluminación y Otros</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Artefacto aplique simple (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="29715"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Spot LED (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="29715"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Colgante liviano 3 luces, 1 efecto (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="59431"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Colgante liviano 5 luces, 1 efecto (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="78730"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Colgante - adicional por efecto"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="19363"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Colgante pesado (mínimo)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="103978"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Tubo LED simple 7W a 36W"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="59431"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Tubo LED doble 7W a 36W"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="73159"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Tubo LED 45W"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="74319"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Tubo LED doble 45W"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="92225"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Ventilador de techo"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="108431"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Ventilador de techo con luminaria, 1 efecto"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="135580"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="acometida">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">🏠</span>
+          <span class="acordeon-header__titulo">Acometida</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Gabinete 1 medidor monofásico (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="227652"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Gabinete 2 medidores monofásicos (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="325340"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Gabinete 3 medidores monofásicos (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="758988"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Gabinete 4 medidores monofásicos (x unidad)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="867405"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="PAT de servicio (jabalina + caja de inspección)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="162585"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Pilar completo (gabinete, TP, caño y PAT)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="894456"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Caño de acometida (amurado y conexión)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="227652"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Caja de toma (fusilera NH 00)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="325340"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Agregado de un gabinete de medidor + TP"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="325340"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="bandejas">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">📏</span>
+          <span class="acordeon-header__titulo">Bandejas Portacables</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja hasta 150mm - metro lineal (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="13163"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja hasta 150mm - metro lineal (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="16465"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja hasta 150mm - accesorio curva/unión T (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="17577"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja hasta 150mm - accesorio curva/unión T (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="20793"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja hasta 150mm - otros accesorios (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="8793"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja hasta 150mm - otros accesorios (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="25265"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 200/300mm - metro lineal (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="19733"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 200/300mm - metro lineal (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="16897"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 200/300mm - accesorio curva/unión T (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="26355"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 200/300mm - accesorio curva/unión T (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="25450"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 200/300mm - otros accesorios (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="13163"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 200/300mm - otros accesorios (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="33945"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 450/600mm - metro lineal (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="26979"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 450/600mm - metro lineal (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="23578"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 450/600mm - accesorio curva/unión T (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="39424"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 450/600mm - accesorio curva/unión T (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="35234"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 450/600mm - otros accesorios (H<3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="17146"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Bandeja 450/600mm - otros accesorios (H>3m)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="47017"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="documentacion">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">📋</span>
+          <span class="acordeon-header__titulo">Documentación, Certificados y Protocolos</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Proyecto eléctrico - mínimo (30 m²)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="552176"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Proyecto eléctrico - por m² adicional"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="15900"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Plano eléctrico - mínimo por m²"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="14680"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Plano eléctrico - por boca"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="12702"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Plano eléctrico - tableros"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="32438"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Plano eléctrico - acometida"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="32438"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Plano eléctrico - mínimo 30 bocas"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="658849"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Lista de materiales - mínimo para 30 m²"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="64986"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Certificado DCI-CAIE T1 residencial/comercial monofásico"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="405097"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Certificado DCI-CAIE T1 residencial trifásico"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="597892"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Certificado DCI-CAIE T1 comercial trifásico"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="597892"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Certificado DCI-CAIE T2 (según potencia instalada)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="31777"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Certificado DCI-CAIE T3 (según potencia instalada)"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="31777"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Protocolo puesta a tierra - residencial/comercial"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="636071"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Protocolo puesta a tierra - industrial"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="636071"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+      <div class="acordeon-seccion" data-seccion="manoDeObra">
+        <button class="acordeon-header" type="button">
+          <span class="acordeon-header__icono">🧰</span>
+          <span class="acordeon-header__titulo">Mano de Obra (jornales de 8 hs)</span>
+          <span class="acordeon-header__subtotal">$0</span>
+          <span class="acordeon-header__flecha">▾</span>
+        </button>
+
+        <div class="acordeon-body">
+          <table class="tabla-materiales">
+            <thead>
+              <tr>
+                <th class="col-nombre">Concepto</th>
+                <th class="col-cant">Cant.</th>
+                <th class="col-precio">Precio unit. ($)</th>
+                <th class="col-sub">Subtotal</th>
+                <th class="col-accion"></th>
+              </tr>
+            </thead>
+            <tbody class="tabla-materiales__cuerpo">
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Oficial especializado - jornal"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="49514"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Oficial electricista - jornal"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="42354"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Medio oficial electricista - jornal"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="39140"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+              <tr class="fila-material">
+                <td data-label="Material"><input type="text" class="input-nombre" value="Ayudante - jornal"></td>
+                <td data-label="Cantidad"><input type="number" class="input-cantidad" min="0" step="1" value="0"></td>
+                <td data-label="Precio unit."><input type="number" class="input-precio" min="0" step="0.01" value="36027"></td>
+                <td data-label="Subtotal"><span class="subtotal-fila">$0</span></td>
+                <td><button class="btn-quitar" type="button" title="Quitar material">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-agregar" type="button">+ Agregar ítem</button>
+        </div>
+      </div>
+
+    </div>
+    <!-- fin .acordeon -->
+
+    <!-- ==================== RESUMEN / TOTAL FINAL ==================== -->
+    <section class="resumen" id="resumen">
+      <h2 class="resumen__titulo">Resumen del presupuesto</h2>
+
+      <ul class="resumen__lista" id="listaResumen">
+        <!-- JS completa esta lista dinámicamente con cada categoría -->
+      </ul>
+
+      <label class="resumen__iva">
+        <input type="checkbox" id="checkIva">
+        Incluir IVA (21%)
+      </label>
+
+      <div class="resumen__total">
+        <span>Total final</span>
+        <strong id="totalFinal">$0</strong>
+      </div>
+    </section>
+
+    <!-- ==================== ACCIONES: PDF / COMPARTIR / IMPRIMIR ==================== -->
+    <section class="acciones" id="acciones">
+      <button class="btn-accion btn-accion--pdf" id="btnDescargarPdf" type="button">
+        <span class="btn-accion__icono">📄</span>
+        Descargar PDF
+      </button>
+
+      <button class="btn-accion btn-accion--compartir" id="btnCompartir" type="button">
+        <span class="btn-accion__icono">📤</span>
+        Compartir
+      </button>
+
+      <!-- Menú de opciones para compartir en PC (oculto por defecto).
+           En celular no se usa: ahí se abre el panel nativo del sistema. -->
+      <div class="menu-compartir" id="menuCompartir">
+        <button class="menu-compartir__opcion" id="compartirWhatsapp" type="button">
+          <span>💬</span> WhatsApp
+        </button>
+        <button class="menu-compartir__opcion" id="compartirFacebook" type="button">
+          <span>📘</span> Facebook
+        </button>
+        <button class="menu-compartir__opcion" id="compartirTwitter" type="button">
+          <span>🐦</span> X / Twitter
+        </button>
+        <button class="menu-compartir__opcion" id="compartirEmail" type="button">
+          <span>✉️</span> Email
+        </button>
+        <button class="menu-compartir__opcion" id="compartirCopiar" type="button">
+          <span>📋</span> Copiar texto
+        </button>
+      </div>
+
+      <button class="btn-accion btn-accion--imprimir" id="btnImprimir" type="button">
+        <span class="btn-accion__icono">🖨️</span>
+        Imprimir
+      </button>
+    </section>
+
+    <!-- ==================== AYUDA ==================== -->
+    <section class="ayuda" id="ayuda">
+      <h3>¿Cómo se usa?</h3>
+      <ol>
+        <li>Hacé clic en cada categoría naranja para desplegarla.</li>
+        <li>Cargá la cantidad y el precio unitario de cada material.</li>
+        <li>Usá <strong>+ Agregar material</strong> para sumar filas nuevas, o <strong>✕</strong> para quitarlas.</li>
+        <li>El total se recalcula solo, en tiempo real, abajo en "Resumen".</li>
+      </ol>
+    </section>
+  </main>
+
+  <!-- Barra de total fija, siempre visible (mobile y desktop) -->
+  <div class="barra-total" id="barraTotal">
+    <span class="barra-total__texto">Total del presupuesto</span>
+    <span class="barra-total__monto" id="totalBarra">$0</span>
+  </div>
+
+  <!-- ==================== PIE DE PÁGINA ==================== -->
+  <footer class="footer">
+    <p>ElectroCalc &middot; Proyecto escolar &middot; Hecho con HTML, CSS y JavaScript</p>
+    <!-- Este link es para el profesional, no para el cliente: lleva a una
+         página aparte (notas.html) donde puede escribir anotaciones propias. -->
+    <p><a href="notas.html" class="footer__link-notas">📒 Mi Libreta — espacio privado del profesional</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
